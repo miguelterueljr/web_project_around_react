@@ -1,5 +1,3 @@
-import React from 'react'; 
-
 import editPhotoProfile from '../images/edit-photo-profile.png';
 import jacquesCosteau from '../images/jacques-costeau.jpg';
 import buttonEdit from '../images/button-edit.png';
@@ -9,6 +7,33 @@ import Header from './Header';
 import Footer from './Footer';
 
 function Main() {
+  //funcao de adicionar ou remover opacidade
+  const togglePageOpacity = () => {
+    const page = document.querySelector('.page');
+    page.classList.toggle('page_opacity');
+  }
+  
+
+  //abre o modal para editar a foto do avatar
+  const handleEditAvatarClick = () => {
+    const modalPhoto = document.querySelector('.modal_photo');
+    modalPhoto.classList.add('modal-photo');
+    togglePageOpacity();
+    
+  }
+
+  const handleEditProfileClick = () => {
+    const modalProfile = document.querySelector('.modal')
+    modalProfile.classList.add('modal-opened')
+    togglePageOpacity();
+  }
+
+  const handleAddPlaceClick = () => {
+    const modalAddPhoto = document.querySelector('.modal-add');
+    modalAddPhoto.classList.add('modal-opened');
+    togglePageOpacity();
+  }
+
   return (
     <div>
       <main className="page">
@@ -16,19 +41,19 @@ function Main() {
 
         <section className="profile">
           <div className="profile__container">
-            <div className="profile__image-overlay">
+            <div className="profile__image-overlay" onClick={handleEditAvatarClick}>
               <img src={jacquesCosteau} alt="Foto JAcques Costeau" className="profile__image" />
               <img src={editPhotoProfile} alt="Simbolo de editar a foto do profile" className="profile__edit-picture" />
             </div>
             <div className="profile__info">
               <div className="profile__title">
                 <h1 className="profile__name">Jacques Costeau</h1>
-                <button className="button button-edit"><img src={buttonEdit} alt="Simbolo de um botão de editar" /></button>
+                <button className="button button-edit" onClick={handleEditProfileClick}><img src={buttonEdit} alt="Simbolo de um botão de editar" /></button>
               </div>
               <span className="profile__about">Explorar</span>
             </div>
           </div>
-          <button className="button button-add">
+          <button className="button button-add" onClick={handleAddPlaceClick}>
             <img src={addButton} alt="Botão com o símbolo mais, para adicionar um card" />
           </button>
         </section>
