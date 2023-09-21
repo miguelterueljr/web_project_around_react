@@ -1,8 +1,12 @@
-import usLogo from './images/around-the-us-logo.png';
-import editPhotoProfile from './images/edit-photo-profile.png';
-import jacquesCosteau from './images/jacques-costeau.jpg';
-import buttonEdit from './images/button-edit.png';
-import addButton from './images/add-button.png';
+import editPhotoProfile from '../images/edit-photo-profile.png';
+import jacquesCosteau from '../images/jacques-costeau.jpg';
+import buttonEdit from '../images/button-edit.png';
+import addButton from '../images/add-button.png';
+
+/*Importação dos componentes*/
+import Header from './Header';
+import Main from './Main';
+import Footer from './Footer';
 
 function App() {
   return (
@@ -79,59 +83,7 @@ function App() {
       </div>
       
 
-      <main class="page">
-        <section class="header">
-          <div class="header__logo">
-            <img src={usLogo} alt="Logotipo around US" class="header__image" />
-          </div>
-          <hr class="header__line" />
-        </section>
-
-        <section class="profile">
-          <div class="profile__container">
-            <div class="profile__image-overlay">
-              <img src={jacquesCosteau} alt="Foto JAcques Costeau" class="profile__image" />
-              <img src={editPhotoProfile} alt="Simbolo de editar a foto do profile" class="profile__edit-picture" />
-            </div>
-          
-            <div class="profile__info">
-              <div class="profile__title">
-                <h1 class="profile__name">Jacques Costeau</h1>
-                <button class="button button-edit"><img src={buttonEdit} alt="Simbolo de um botão de editar" /></button>
-                
-              </div>
-              <span class="profile__about">Explorar</span>
-            </div>
-          </div>
-          <button class="button button-add">
-            <img src={addButton} alt="Botão com o simbolo mais, para adicionar um card" />
-          </button>
-        </section>
-
-        <section class="elements">
-            
-        </section>
-
-        {/*<!--Template para o card-->*/}
-        <template id="element" class="card-template">
-          <article class="element">
-            <img class="element__image" alt='template'/>
-            <button class="element__delete"><img src="<%=require('./images/delete-icon.png')%>" alt="botão em formato de delete" /></button>
-            <div class="element__text">
-              <h3 class="element__title"></h3>
-              <div class="element__text_liked">
-                <button class="element__button"><img src="<%=require('./images/like-button.svg')%>" alt="Símbolo de curtir no formato de coração." class="element__button_image" /></button>
-                <p class="element__number">0</p>
-              </div>
-            </div>
-          </article>
-        </template>
-        
-        <footer class="footer">
-          <h4 class="footer__title">&copy; 2023 Around The U.S.</h4>
-        </footer>
-
-      </main>
+      <Main />
 
     </div>
   );
