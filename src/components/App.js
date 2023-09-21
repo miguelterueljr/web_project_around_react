@@ -29,7 +29,7 @@ function App() {
 
       {/*<!--modal do adicionar card-->*/}
       <div className="modal modal-add">
-        <button className="modal__button-close button-close"><img src={"<%=require('./images/close-icon.png')%>"} alt="Icone em formato de fechar com um simbolo de X" /></button>
+        <button className="modal__button-close button-close"><img src={buttonClose} alt="Icone em formato de fechar com um simbolo de X" /></button>
         <div className="modal__container">
           <h2 className="modal__title">Novo Local</h2>
           <form className="modal__form modal__form_add" novalidate>
