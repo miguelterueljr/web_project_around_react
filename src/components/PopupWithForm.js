@@ -1,7 +1,6 @@
 import buttonClose from '../images/close-icon.png';
 
 function PopupWithForm(props) {
-  console.log(props)
   return (
     <>
       {/*dessa maneira eu tenho uma classe comum e envio uma extra via props*/}
