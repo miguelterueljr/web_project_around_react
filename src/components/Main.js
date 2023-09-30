@@ -9,12 +9,14 @@ import Header from './Header';
 import Footer from './Footer';
 
 import apiInstance from '../utils/api';
+import Card from './Card';
 
 
 function Main(props) {
   const [userName, setUserName] = useState('');
   const [userDescription, setUserDescription] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
+  const [cards, setCards] = useState([])
 
   useEffect(() => {
     // Função para buscar os dados do usuário na API
@@ -24,10 +26,7 @@ function Main(props) {
           // Extrair os dados relevantes do usuário
           //to fazendo um object desconstructing para armazenar em data e so utilziar o nome, sem ser data.name ou data.about ou data.avatar
           const { name, about, avatar } = data;
-          console.log(name)
-          console.log(about)
-          console.log(avatar)
-
+          
           // Definir os dados recebidos nas variáveis de estado
           setUserName(name || 'JacquesCosteau');
           setUserDescription(about || 'Explorador');
@@ -38,12 +37,33 @@ function Main(props) {
         });
     };
 
+    // Função para pegar os cards iniciais do servidor
+    const fetchInitialCards = () => {
+      apiInstance.fetchInitialCards()
+        .then((res) => {
+          // Adicione os cards buscados ao estado usando setCards
+          setCards(res);
+        })
+        .catch((error) => {
+          console.error('Erro ao buscar os cards iniciais:', error);
+        });
+    };
+      
+    
+
     // Chama a função para buscar os dados do usuário quando o componente é montado
     fetchUserData();
-  });
+    fetchInitialCards();
 
-  console.log('userAvatar:', userAvatar);
-  console.log('descricao', userDescription)
+  }, []);
+
+  //aqui estou colocando minha resposta no console somente quando o array nao esta mais vazio
+  useEffect(() => {
+    if (cards.length > 0) {
+      console.log(cards);
+    }
+  }, [cards]);
+
 
   return (
     <div>
@@ -69,25 +89,18 @@ function Main(props) {
             <img src={addButton} alt="Botão com o símbolo mais, para adicionar um card" />
           </button>
         </section>
-
+        
         <section className="elements">
-          {/* Conteúdo da seção de elementos */}
-        </section>
+          {cards.map((cardData, index) => (
+            <Card
+              key={index} // chave para cada elemento da lista
+              title={cardData.name} // vem do objeto o name
+              image={cardData.link} // vem do objeto o link
+              likes={cardData.likes} // numero de likes
+            />
+  ))}
+</section>
 
-        {/* Template para o card */}
-        <template id="element" className="card-template">
-          <article className="element">
-            <img className="element__image" alt="template" />
-            <button className="element__delete"><img src="<%=require('./images/delete-icon.png')%>" alt="botão em formato de delete" /></button>
-            <div className="element__text">
-              <h3 className="element__title"></h3>
-              <div className="element__text_liked">
-                <button className="element__button"><img src="<%=require('./images/like-button.svg')%>" alt="Símbolo de curtir no formato de coração." className="element__button_image" /></button>
-                <p className="element__number">0</p>
-              </div>
-            </div>
-          </article>
-        </template>
 
         <Footer />
       </main>
