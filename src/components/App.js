@@ -8,6 +8,7 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen ] = useState(false)
+  const [selectedCard, setSelectedCard] = useState(null)
 
 
   //funcao de adicionar ou remover opacidade
@@ -35,12 +36,18 @@ function App() {
     togglePageOpacity();
   }
 
+  const handleCardClick = (cardData) => {
+    setSelectedCard(cardData);
+    togglePageOpacity()
+  };
+
   //funcao para fechar os pop-ups
   const closeAllPopups = () => {
     togglePageOpacity();
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
+    setSelectedCard(null)
     
   };
   
@@ -94,13 +101,13 @@ function App() {
         </form>
       </PopupWithForm>
 
-      <ImagePopup />
+      <ImagePopup card={selectedCard} onClose={closeAllPopups} />
 
       <Main 
         onEditProfileClick = {handleEditProfileClick}
         onAddPlaceClick={handleAddPlaceClick}
         onEditAvatarClick= {handleEditAvatarClick}
-        onCardClick='' //aqui falta ainda configurar
+        onCardClick={handleCardClick} //aqui falta ainda configurar
       
       />
 

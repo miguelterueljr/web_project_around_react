@@ -17,7 +17,13 @@ function Main(props) {
   const [userDescription, setUserDescription] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
   const [cards, setCards] = useState([])
+ 
 
+  const handleCardClick = (cardData) => {
+    console.log(cardData)
+    props.onCardClick(cardData);
+  };
+  
   useEffect(() => {
     // Função para buscar os dados do usuário na API
     const fetchUserData = () => {
@@ -97,15 +103,17 @@ function Main(props) {
               title={cardData.name} // vem do objeto o name
               image={cardData.link} // vem do objeto o link
               likes={cardData.likes} // numero de likes
+              onCardClick={() => handleCardClick(cardData)}
             />
-  ))}
-</section>
-
+          ))}
+        </section>
 
         <Footer />
       </main>
     </div>
   )
+
+  
 }
 
 export default Main;

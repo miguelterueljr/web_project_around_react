@@ -4,7 +4,7 @@ import likeButton from '../images/like-button.svg'
 function Card (props) {
   return (
     <article className="element">
-      <img className="element__image" alt={`Imagem de ${props.title}`} src={props.image}/>
+      <img className="element__image" alt={`Imagem de ${props.title}`} src={props.image} onClick={props.onCardClick}/>
       <button className="element__delete">
         <img src={deleteIcon} alt="botão em formato de delete" />
       </button>
