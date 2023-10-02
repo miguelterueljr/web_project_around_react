@@ -1,7 +1,6 @@
 //variaveis para uso na Api
 const authorizationCode = "85c06b76-d1bb-40cc-b9fa-fda6b61002da";
 const urlApi = "https://around.nomoreparties.co/v1/web_ptbr_04";
-const myUserId = "436e74c115dfe006750ac205";
 
 class Api {
   constructor() {
@@ -17,9 +16,6 @@ class Api {
       }
     })
       .then(response => response.json())
-      .then(data => {
-        return data;
-      })
       .catch(error => {
         console.error("Erro ao carregar as informações do perfil:", error);
         throw error;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import editPhotoProfile from '../images/edit-photo-profile.png';
-import jacquesCosteau from '../images/jacques-costeau.jpg';
+import initialImage from '../images/jacques-costeau.jpg';
 import buttonEdit from '../images/button-edit.png';
 import addButton from '../images/add-button.png';
 
@@ -18,9 +18,7 @@ function Main(props) {
   const [userAvatar, setUserAvatar] = useState('');
   const [cards, setCards] = useState([])
  
-
   const handleCardClick = (cardData) => {
-    console.log(cardData)
     props.onCardClick(cardData);
   };
   
@@ -28,15 +26,13 @@ function Main(props) {
     // Função para buscar os dados do usuário na API
     const fetchUserData = () => {
       apiInstance.getProfile()
-        .then((data) => {
-          // Extrair os dados relevantes do usuário
-          //to fazendo um object desconstructing para armazenar em data e so utilziar o nome, sem ser data.name ou data.about ou data.avatar
-          const { name, about, avatar } = data;
-          
+        // Extrair os dados relevantes do usuário
+          //to fazendo um object destructuring para armazenar em data e so utilziar o nome, sem ser data.name ou data.about ou data.avatar 
+        .then(({name, about, avatar}) => {
           // Definir os dados recebidos nas variáveis de estado
           setUserName(name || 'JacquesCosteau');
           setUserDescription(about || 'Explorador');
-          setUserAvatar(avatar || jacquesCosteau);
+          setUserAvatar(avatar || initialImage);
         })
         .catch((error) => {
           console.error('Erro ao buscar os dados do perfil:', error);
@@ -55,28 +51,16 @@ function Main(props) {
         });
     };
       
-    
-
     // Chama a função para buscar os dados do usuário quando o componente é montado
     fetchUserData();
     fetchInitialCards();
 
   }, []);
 
-  //aqui estou colocando minha resposta no console somente quando o array nao esta mais vazio
-  useEffect(() => {
-    if (cards.length > 0) {
-      console.log(cards);
-    }
-  }, [cards]);
-
-
   return (
     <div>
       <main className="page">
-      
         <Header />
-
         <section className="profile">
           <div className="profile__container">
             <div className="profile__image-overlay" onClick={props.onEditAvatarClick}>
@@ -95,7 +79,7 @@ function Main(props) {
             <img src={addButton} alt="Botão com o símbolo mais, para adicionar um card" />
           </button>
         </section>
-        
+
         <section className="elements">
           {cards.map((cardData, index) => (
             <Card
@@ -107,13 +91,10 @@ function Main(props) {
             />
           ))}
         </section>
-
         <Footer />
       </main>
     </div>
-  )
-
-  
+  ) 
 }
 
 export default Main;
