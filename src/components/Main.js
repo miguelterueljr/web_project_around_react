@@ -1,61 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 
 import editPhotoProfile from '../images/edit-photo-profile.png';
-import initialImage from '../images/jacques-costeau.jpg';
 import buttonEdit from '../images/button-edit.png';
 import addButton from '../images/add-button.png';
 
 import Header from './Header';
 import Footer from './Footer';
-
-import apiInstance from '../utils/api';
 import Card from './Card';
-
+import CurrentUSerContext from '../contexts/CurrentUserContext';
 
 function Main(props) {
-  const [userName, setUserName] = useState('');
-  const [userDescription, setUserDescription] = useState('');
-  const [userAvatar, setUserAvatar] = useState('');
-  const [cards, setCards] = useState([])
- 
+  //acesso valor do contexto atraves do hook useContext
+  const currentUser = useContext(CurrentUSerContext);
+
+  //botei agora e ta me mostrnado no console os cards
+  const initialCards = currentUser.initialCards;
+  console.log(initialCards)
+  
   const handleCardClick = (cardData) => {
     props.onCardClick(cardData);
   };
-  
-  useEffect(() => {
-    // Função para buscar os dados do usuário na API
-    const fetchUserData = () => {
-      apiInstance.getProfile()
-        // Extrair os dados relevantes do usuário
-          //to fazendo um object destructuring para armazenar em data e so utilziar o nome, sem ser data.name ou data.about ou data.avatar 
-        .then(({name, about, avatar}) => {
-          // Definir os dados recebidos nas variáveis de estado
-          setUserName(name || 'JacquesCosteau');
-          setUserDescription(about || 'Explorador');
-          setUserAvatar(avatar || initialImage);
-        })
-        .catch((error) => {
-          console.error('Erro ao buscar os dados do perfil:', error);
-        });
-    };
-
-    // Função para pegar os cards iniciais do servidor
-    const fetchInitialCards = () => {
-      apiInstance.fetchInitialCards()
-        .then((res) => {
-          // Adicione os cards buscados ao estado usando setCards
-          setCards(res);
-        })
-        .catch((error) => {
-          console.error('Erro ao buscar os cards iniciais:', error);
-        });
-    };
-      
-    // Chama a função para buscar os dados do usuário quando o componente é montado
-    fetchUserData();
-    fetchInitialCards();
-
-  }, []);
 
   return (
     <div>
@@ -64,15 +28,15 @@ function Main(props) {
         <section className="profile">
           <div className="profile__container">
             <div className="profile__image-overlay" onClick={props.onEditAvatarClick}>
-              <img src={userAvatar} alt="Foto JAcques Costeau" className="profile__image" />
+              <img src={currentUser.currentUser ? currentUser.currentUser.avatar: 'Loading'} alt="Foto JAcques Costeau" className="profile__image" />
               <img src={editPhotoProfile} alt="Simbolo de editar a foto do profile" className="profile__edit-picture" />
             </div>
             <div className="profile__info">
               <div className="profile__title">
-                <h1 className="profile__name">{userName}</h1>
+                <h1 className="profile__name">{currentUser.currentUser ? currentUser.currentUser.name : 'Loading...'}</h1>
                 <button className="button button-edit" onClick={props.onEditProfileClick}><img src={buttonEdit} alt="Simbolo de um botão de editar" /></button>
               </div>
-              <span className="profile__about">{userDescription}</span>
+              <span className="profile__about">{currentUser.currentUser ? currentUser.currentUser.about : 'Loading...'}</span>
             </div>
           </div>
           <button className="button button-add" onClick={props.onAddPlaceClick}>
@@ -81,20 +45,24 @@ function Main(props) {
         </section>
 
         <section className="elements">
-          {cards.map((cardData, index) => (
+          {initialCards.map((cardData, index) => (
             <Card
-              key={index} // chave para cada elemento da lista
-              title={cardData.name} // vem do objeto o name
-              image={cardData.link} // vem do objeto o link
-              likes={cardData.likes} // numero de likes
+              key={index}
+              title={cardData.name}
+              image={cardData.link}
+              likes={cardData.likes}
+              id={cardData._id}
+              owner={cardData.owner}
               onCardClick={() => handleCardClick(cardData)}
             />
           ))}
         </section>
+
         <Footer />
       </main>
     </div>
-  ) 
+  )
+  
 }
 
 export default Main;

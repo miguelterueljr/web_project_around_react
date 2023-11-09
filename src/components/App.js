@@ -1,15 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 /*Importação dos componentes*/
 import Main from './Main';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
+import apiInstance from '../utils/api';
+import CurrentUSerContext from '../contexts/CurrentUserContext';
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen ] = useState(false)
   const [selectedCard, setSelectedCard] = useState(null)
+  const [currentUser, setCurrentUser] = useState(null);
+  const [initialCards, setInitialCards] = useState([]);
 
+  //faço a chamada a minha classe api e atribuo seu valor a variavel currentUser
+  useEffect(() => {
+    apiInstance.getProfile()
+      .then(userData => {
+        setCurrentUser(userData);
+        console.log(userData); 
+      })
+      .catch(error => {
+        console.error("Erro ao buscar o perfil do usuário:", error);
+      });
+
+    //aqui to puxando do arquivo api o fetchInitialCards  
+    apiInstance.fetchInitialCards()
+      .then(cardData => {
+        setInitialCards(cardData); // Atualize o estado com os cards iniciais
+        console.log(cardData);
+      })
+      .catch(error => {
+        console.error("Erro ao buscar os cards iniciais:", error);
+      });  
+  }, []);
+
+  console.log('teste', currentUser && currentUser._id);
 
   //funcao de adicionar ou remover opacidade
   const togglePageOpacity = () => {
@@ -52,66 +79,66 @@ function App() {
   };
   
   return (
-  
-    <div className='root'>
+    <CurrentUSerContext.Provider value={{currentUser, initialCards}}>
+      <div className='root'>
+        {/*modal do edit-profile-->*/}
+        <PopupWithForm title='Editar Perfil' isOpen = {isEditProfilePopupOpen} onClose = {closeAllPopups}>
+          <form className="modal__form" noValidate>
+            <div className="modal__input-separation">
+              <input type="text" id="name-input" className="modal__input modal__input_name" placeholder="Digite o nome do Usuário" required minLength="2" maxLength="40" />
+              <span className="name-input-error modal__input-error"></span>
+            </div>
+            <div className="modal__input-separation">
+              <input type="text" id="job-input" className="modal__input modal__input_job" placeholder="Digite profissão do Usuário" required minLength="2" maxLength="200" />
+              <span className="job-input-error modal__input-error"></span>
+            </div>
+            <button className="modal__button modal__button-save" type="submit">Salvar</button>
+          </form>
+        </PopupWithForm>
 
-      {/*modal do edit-profile-->*/}
-      <PopupWithForm title='Editar Perfil' isOpen = {isEditProfilePopupOpen} onClose = {closeAllPopups}>
-        <form className="modal__form" noValidate>
-          <div className="modal__input-separation">
-            <input type="text" id="name-input" className="modal__input modal__input_name" placeholder="Digite o nome do Usuário" required minLength="2" maxLength="40" />
-            <span className="name-input-error modal__input-error"></span>
-          </div>
-          <div className="modal__input-separation">
-            <input type="text" id="job-input" className="modal__input modal__input_job" placeholder="Digite profissão do Usuário" required minLength="2" maxLength="200" />
-            <span className="job-input-error modal__input-error"></span>
-          </div>
-          <button className="modal__button modal__button-save" type="submit">Salvar</button>
-        </form>
-      </PopupWithForm>
+        {/*<!--modal do adicionar card-->*/}
+        <PopupWithForm name='modal-add' buttonclose='button-close' title='Novo Local' isOpen = {isAddPlacePopupOpen} onClose = {closeAllPopups}>
+          <form className="modal__form modal__form_add" noValidate>
+            <div className="modal__input-separation">
+              <input type="text" id="title-input" className="modal__input modal__input_title" placeholder="Título" required minLength="2" maxLength="30" />
+              <span className="title-input-error modal__input-error"></span>
+            </div>
+            <div className="modal__input-separation">
+              <input type="url" id="url-input" className="modal__input modal__input_link" placeholder="URL da Imagem" required />
+              <span className="url-input-error modal__input-error"></span>
+            </div>
+            <button className="modal__button modal__button-create" type="submit">Criar</button> 
+          </form>
+        </PopupWithForm>
 
-      {/*<!--modal do adicionar card-->*/}
-      <PopupWithForm name='modal-add' buttonclose='button-close' title='Novo Local' isOpen = {isAddPlacePopupOpen} onClose = {closeAllPopups}>
-        <form className="modal__form modal__form_add" noValidate>
-          <div className="modal__input-separation">
-            <input type="text" id="title-input" className="modal__input modal__input_title" placeholder="Título" required minLength="2" maxLength="30" />
-            <span className="title-input-error modal__input-error"></span>
-          </div>
-          <div className="modal__input-separation">
-            <input type="url" id="url-input" className="modal__input modal__input_link" placeholder="URL da Imagem" required />
-            <span className="url-input-error modal__input-error"></span>
-          </div>
-          <button className="modal__button modal__button-create" type="submit">Criar</button> 
-        </form>
-      </PopupWithForm>
+        {/*<!--modal de confirmação de delete card-->*/}
+        <PopupWithForm name='modal-delete' buttonclose='button-close' buttonclassetwo='modal__button-close_close' title='Tem certeza ?'>
+          <button className="modal__button modal__button-create modal__button_confirm" type="submit">Sim</button> 
+        </PopupWithForm>
 
-      {/*<!--modal de confirmação de delete card-->*/}
-      <PopupWithForm name='modal-delete' buttonclose='button-close' buttonclassetwo='modal__button-close_close' title='Tem certeza ?'>
-        <button className="modal__button modal__button-create modal__button_confirm" type="submit">Sim</button> 
-      </PopupWithForm>
+        {/*<!--modal de alterar foto do perfil-->*/}
+        <PopupWithForm name='modal_photo' buttonclose='button-close' buttonclassetwo='button-close-photo' title='Alterar a foto do perfil' isOpen={isEditAvatarPopupOpen} onClose = {closeAllPopups}>
+          <form className="modal__form modal__form_add modal__form_editPhoto" noValidate>
+            <div className="modal__input-separation">
+              <input type="url" id="photo-input" className="modal__input modal__input_link modal__input_save-photo" placeholder="URL da Imagem" required />
+              <span className="url-input-error modal__input-error"></span>
+            </div>
+            <button className="modal__button modal__button-create modal__button_save" type="submit">Salvar</button> 
+          </form>
+        </PopupWithForm>
 
-      {/*<!--modal de alterar foto do perfil-->*/}
-      <PopupWithForm name='modal_photo' buttonclose='button-close' buttonclassetwo='button-close-photo' title='Alterar a foto do perfil' isOpen={isEditAvatarPopupOpen} onClose = {closeAllPopups}>
-        <form className="modal__form modal__form_add modal__form_editPhoto" noValidate>
-          <div className="modal__input-separation">
-            <input type="url" id="photo-input" className="modal__input modal__input_link modal__input_save-photo" placeholder="URL da Imagem" required />
-            <span className="url-input-error modal__input-error"></span>
-          </div>
-          <button className="modal__button modal__button-create modal__button_save" type="submit">Salvar</button> 
-        </form>
-      </PopupWithForm>
+        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
 
-      <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+        <Main 
+          onEditProfileClick = {handleEditProfileClick}
+          onAddPlaceClick={handleAddPlaceClick}
+          onEditAvatarClick= {handleEditAvatarClick}
+          onCardClick={handleCardClick}
+          initialCards={initialCards}
+        />
 
-      <Main 
-        onEditProfileClick = {handleEditProfileClick}
-        onAddPlaceClick={handleAddPlaceClick}
-        onEditAvatarClick= {handleEditAvatarClick}
-        onCardClick={handleCardClick} //aqui falta ainda configurar
-      
-      />
-
-    </div>
+      </div>
+    </CurrentUSerContext.Provider>
   );
 }
 
