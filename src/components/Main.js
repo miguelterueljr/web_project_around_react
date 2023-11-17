@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
 
-
 import editPhotoProfile from '../images/edit-photo-profile.png';
 import buttonEdit from '../images/button-edit.png';
 import addButton from '../images/add-button.png';
@@ -15,42 +14,34 @@ function Main(props) {
   //acesso valor do contexto atraves do hook useContext
   const currentUser = useContext(CurrentUSerContext);
 
-  //botei agora e ta me mostrnado no console os cards
   const initialCards = currentUser.initialCards;
-  console.log(initialCards)
-  
-  
+  const [cards, setCards] = useState([]);
+
+  useEffect(() => {
+    setCards(currentUser.initialCards);
+  }, [currentUser.initialCards]);
+
   const handleCardClick = (cardData) => {
     props.onCardClick(cardData);
   };
 
-  //preciso fazer uma chamada ao apiInstance
-  //dentro da Api criar os metodos para adicionar a curtida ao like e descurtida(put e delete)
-  //funcao do like e dislike, aind tenho q descobrir o que vai ser esse card, sera que realmente preciso charmar um card ? 
+
   function handleCardLike(card) {
     // Verifique mais uma vez se esse cartão já foi curtido
     const isLiked = card.likes.some(i => i._id === currentUser.currentUser._id);
+    console.log(isLiked)
+    console.log('anterior',card) // estado inicial
 
-    //chama metodo na api para curtir e descurtir
-     // Chama método na api para curtir e descurtir
-    apiInstance.changeLikeCardStatus(card._id, !isLiked)
-      .then(updatedCard => {
-        // Atualizar o estado do card com o card atualizado pela API
-        // Aqui, você pode usar o retorno da API para atualizar seu estado local, se necessário
 
-        
-        console.log('Card atualizado:', updatedCard);
-      })
-      .catch(error => {
-        // Lidar com erros, se necessário
-        console.error('Erro ao curtir/descurtir o card:', error);
-      });
-
-    //verfica no console o que aparece, se so deixar currentUSer vc ve tudo util para testar a logica dessa funcao
-    console.log(currentUser.currentUser._id)
-    console.log(currentUser.initialCards)
-    console.log('Cartão já foi curtido?', isLiked);
-   
+    // Envie uma solicitação para a API e obtenha os dados do cartão atualizados
+    apiInstance.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
+      console.log('atualizado',newCard) //apos o curtir ou descurtir
+      // Atualize o estado local dos cards com os novos dados
+      setCards((state) =>
+        state.map((c) => (c._id === card._id ? newCard : c))
+      );
+    });
+    
   }
 
   return (
@@ -77,7 +68,7 @@ function Main(props) {
         </section>
 
         <section className="elements">
-          {initialCards.map((cardData, index) => (
+          {cards.map((cardData, index) => (
             <Card
               key={index}
               title={cardData.name}
@@ -86,7 +77,10 @@ function Main(props) {
               id={cardData._id}
               owner={cardData.owner}
               onCardClick={() => handleCardClick(cardData)}
-              onCardLike = {() => handleCardLike(cardData)}
+              onCardLike={() => {
+                console.log("Botão de curtir clicado para o cardData:", cardData);
+                handleCardLike(cardData);
+              }}
               isLiked={cardData.likes.some(i => i._id === currentUser.currentUser._id)}
             />
           ))}

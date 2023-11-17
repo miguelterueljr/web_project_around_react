@@ -35,6 +35,22 @@ class Api {
         return [];
       });
   }
+
+  changeLikeCardStatus(cardId, isLiked) {
+    const method = isLiked ? 'PUT' : 'DELETE';
+
+    return fetch(`${this.baseUrl}/cards/likes/${cardId}`, {
+      method,
+      headers: {
+        authorization: this.authorization
+      }
+    })
+      .then(response => response.json())
+      .catch(error => {
+        console.error("Erro ao alterar o status de curtida do cartão:", error);
+        throw error;
+      });
+  }
 }
 
 const apiInstance = new Api();

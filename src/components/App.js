@@ -19,7 +19,6 @@ function App() {
     apiInstance.getProfile()
       .then(userData => {
         setCurrentUser(userData);
-        console.log(userData); 
       })
       .catch(error => {
         console.error("Erro ao buscar o perfil do usuário:", error);
@@ -29,14 +28,11 @@ function App() {
     apiInstance.fetchInitialCards()
       .then(cardData => {
         setInitialCards(cardData); // Atualize o estado com os cards iniciais
-        console.log(cardData);
       })
       .catch(error => {
         console.error("Erro ao buscar os cards iniciais:", error);
       });  
   }, []);
-
-  console.log('teste', currentUser && currentUser._id);
 
   //funcao de adicionar ou remover opacidade
   const togglePageOpacity = () => {
