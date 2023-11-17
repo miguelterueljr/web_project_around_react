@@ -5,6 +5,8 @@ import CurrentUSerContext from '../contexts/CurrentUserContext';
 
 //preciso fazer com q o contexto funcione
 function Card (props) {
+
+  
   const myId = "436e74c115dfe006750ac205"
   //acessa dados do usuario atual 
   const currentUser = useContext(CurrentUSerContext);
@@ -32,7 +34,7 @@ function Card (props) {
 
         <h3 className="element__title">{props.title}</h3>
         <div className="element__text_liked">
-          <button className="element__button">
+          <button className="element__button" onClick={props.onCardLike}>
             <img src={likeButton} alt="Símbolo de curtir no formato de coração." className={cardLikeButtonClassName} />
           </button>
           <p className="element__number">{props.likes.length}</p>
