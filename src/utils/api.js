@@ -51,6 +51,21 @@ class Api {
         throw error;
       });
   }
+
+  // Método para excluir um cartão
+  deleteCard(cardId) {
+    return fetch(`${this.baseUrl}/cards/${cardId}`, {
+      method: 'DELETE',
+      headers: {
+        authorization: this.authorization
+      }
+    })
+      .then(response => response.json())
+      .catch(error => {
+        console.error("Erro ao excluir o cartão:", error);
+        throw error;
+      });
+  }
 }
 
 const apiInstance = new Api();

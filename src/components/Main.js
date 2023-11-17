@@ -13,7 +13,6 @@ import apiInstance from '../utils/api';
 function Main(props) {
   //acesso valor do contexto atraves do hook useContext
   const currentUser = useContext(CurrentUSerContext);
-
   const initialCards = currentUser.initialCards;
   const [cards, setCards] = useState([]);
 
@@ -26,12 +25,12 @@ function Main(props) {
   };
 
 
+  //funcao like e dislike card
   function handleCardLike(card) {
     // Verifique mais uma vez se esse cartão já foi curtido
     const isLiked = card.likes.some(i => i._id === currentUser.currentUser._id);
     console.log(isLiked)
     console.log('anterior',card) // estado inicial
-
 
     // Envie uma solicitação para a API e obtenha os dados do cartão atualizados
     apiInstance.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
@@ -41,7 +40,17 @@ function Main(props) {
         state.map((c) => (c._id === card._id ? newCard : c))
       );
     });
-    
+  }
+
+  //deletar cartoes
+  function handleCardDelete(card) {
+    // Envie uma solicitação para a API para excluir o cartão
+    apiInstance.deleteCard(card._id)
+      .then(() => {
+        // Atualize o estado local dos cards excluindo o cartão deletado
+        setCards((state) => state.filter((c) => c._id !== card._id));
+      })
+    console.log('é pra ser deletado')
   }
 
   return (
@@ -77,15 +86,12 @@ function Main(props) {
               id={cardData._id}
               owner={cardData.owner}
               onCardClick={() => handleCardClick(cardData)}
-              onCardLike={() => {
-                console.log("Botão de curtir clicado para o cardData:", cardData);
-                handleCardLike(cardData);
-              }}
+              onCardLike={() => handleCardLike(cardData)}
+              onCardDelete={() => handleCardDelete(cardData)}
               isLiked={cardData.likes.some(i => i._id === currentUser.currentUser._id)}
             />
           ))}
         </section>
-
         <Footer />
       </main>
     </div>
