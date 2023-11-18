@@ -5,6 +5,7 @@ import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import apiInstance from '../utils/api';
 import CurrentUSerContext from '../contexts/CurrentUserContext';
+import EditProfilePopup from './EditProfilePopup';
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -78,19 +79,7 @@ function App() {
     <CurrentUSerContext.Provider value={{currentUser, initialCards}}>
       <div className='root'>
         {/*modal do edit-profile-->*/}
-        <PopupWithForm title='Editar Perfil' isOpen = {isEditProfilePopupOpen} onClose = {closeAllPopups}>
-          <form className="modal__form" noValidate>
-            <div className="modal__input-separation">
-              <input type="text" id="name-input" className="modal__input modal__input_name" placeholder="Digite o nome do Usuário" required minLength="2" maxLength="40" />
-              <span className="name-input-error modal__input-error"></span>
-            </div>
-            <div className="modal__input-separation">
-              <input type="text" id="job-input" className="modal__input modal__input_job" placeholder="Digite profissão do Usuário" required minLength="2" maxLength="200" />
-              <span className="job-input-error modal__input-error"></span>
-            </div>
-            <button className="modal__button modal__button-save" type="submit">Salvar</button>
-          </form>
-        </PopupWithForm>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose = {closeAllPopups} />
 
         {/*<!--modal do adicionar card-->*/}
         <PopupWithForm name='modal-add' buttonclose='button-close' title='Novo Local' isOpen = {isAddPlacePopupOpen} onClose = {closeAllPopups}>
