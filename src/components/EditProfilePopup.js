@@ -1,25 +1,52 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
+import CurrentUSerContext from "../contexts/CurrentUserContext";
+
 
 function EditProfilePopup(props) {
 
-  const [value, setValue] = useState('')
+  const currentUser = useContext(CurrentUSerContext)
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
 
-  function handleChange(evt) {
-    setValue(evt.target.value)
+  useEffect(() => {
+    // Verifique se currentUser está definido antes de acessar os dados, senao pode retornar null
+    if (currentUser && currentUser.currentUser) {
+      setName(currentUser.currentUser.name);
+      setDescription(currentUser.currentUser.about);
+    }
+  }, [currentUser]);
+  
+  function handleChangeName(evt) {
+    setName(evt.target.value)
+    console.log(evt.target.value)
   }
-//colocar o onChange la no input
-//isso que se chama gerenciador de estados  
+
+  function handleChangeDescription(evt) {
+    setDescription(evt.target.value);
+    console.log(evt.target.value)
+  }
+
+  // Função para lidar com o envio do formulário
+  function handleSubmit(evt) {
+    evt.preventDefault();
+    console.log('teste')
+    // Passe os valores dos componentes gerenciados para o manipulador externo
+    props.onUpdateUser({
+      name,
+      about: description,
+    });
+  }
 
   return (
-    <PopupWithForm title='Editar Perfil' isOpen = {props.isOpen} onClose = {props.onClose}>
-          <form className="modal__form" noValidate>
+    <PopupWithForm title='Editar Perfil' isOpen = {props.isOpen} onClose = {props.onClose} name='edit' edit='Edit profile' onSubmit={handleSubmit}>
+          <form className="modal__form" noValidate onSubmit={handleSubmit}>
             <div className="modal__input-separation">
-              <input type="text" id="name-input" className="modal__input modal__input_name" placeholder="Digite o nome do Usuário" required minLength="2" maxLength="40" />
+              <input type="text" id="name-input" className="modal__input modal__input_name" placeholder="Digite o nome do Usuário" required minLength="2" maxLength="40" onChange={handleChangeName} value={name}/>
               <span className="name-input-error modal__input-error"></span>
             </div>
             <div className="modal__input-separation">
-              <input type="text" id="job-input" className="modal__input modal__input_job" placeholder="Digite profissão do Usuário" required minLength="2" maxLength="200" />
+              <input type="text" id="job-input" className="modal__input modal__input_job" placeholder="Digite profissão do Usuário" required minLength="2" maxLength="200" value={description} onChange={handleChangeDescription}/>
               <span className="job-input-error modal__input-error"></span>
             </div>
             <button className="modal__button modal__button-save" type="submit">Salvar</button>

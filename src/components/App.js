@@ -74,12 +74,27 @@ function App() {
     setSelectedCard(null)
     
   };
+
+  const handleUpdateUser = (userData) => {
+    apiInstance.setUserInfo(userData)
+      .then(updatedUser => {
+        setCurrentUser(updatedUser);
+        closeAllPopups();
+      })
+      .catch(error => {
+        console.error("Erro ao atualizar o perfil do usuário:", error);
+      });
+  };
   
   return (
     <CurrentUSerContext.Provider value={{currentUser, initialCards}}>
       <div className='root'>
         {/*modal do edit-profile-->*/}
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose = {closeAllPopups} />
+        <EditProfilePopup 
+          isOpen={isEditProfilePopupOpen} 
+          onClose = {closeAllPopups} 
+          onUpdateUser={handleUpdateUser}
+        />
 
         {/*<!--modal do adicionar card-->*/}
         <PopupWithForm name='modal-add' buttonclose='button-close' title='Novo Local' isOpen = {isAddPlacePopupOpen} onClose = {closeAllPopups}>

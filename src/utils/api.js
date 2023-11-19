@@ -66,6 +66,26 @@ class Api {
         throw error;
       });
   }
+
+  // Método para atualizar as informações do perfil do usuário
+  setUserInfo(userData) {
+    return fetch(`${this.baseUrl}/users/me`, {
+      method: 'PATCH', // Utilize o método PATCH para atualizar as informações existentes
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: this.authorization,
+      },
+      body: JSON.stringify({
+        name: userData.name,
+        about: userData.about,
+      }),
+    })
+      .then(response => response.json())
+      .catch(error => {
+        console.error("Erro ao atualizar as informações do perfil:", error);
+        throw error;
+      });
+  }
 }
 
 const apiInstance = new Api();
