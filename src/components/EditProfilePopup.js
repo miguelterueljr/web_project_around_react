@@ -9,29 +9,28 @@ function EditProfilePopup(props) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
-  useEffect(() => {
-    // Verifique se currentUser está definido antes de acessar os dados, senao pode retornar null
-    if (currentUser && currentUser.currentUser) {
-      setName(currentUser.currentUser.name);
-      setDescription(currentUser.currentUser.about);
+  /*
+    useEffect(() => {
+      // Verifique se currentUser está definido antes de acessar os dados, senao pode retornar null
+      if (currentUser && currentUser.currentUser) {
+        setName(currentUser.currentUser.name);
+        setDescription(currentUser.currentUser.about);
     }
-  }, [currentUser]);
+    }, [currentUser]);
+  */
   
   function handleChangeName(evt) {
     setName(evt.target.value)
-    console.log(evt.target.value)
   }
 
   function handleChangeDescription(evt) {
     setDescription(evt.target.value);
-    console.log(evt.target.value)
   }
 
   // Função para lidar com o envio do formulário
   function handleSubmit(evt) {
     evt.preventDefault();
-    console.log('teste')
-    // Passe os valores dos componentes gerenciados para o manipulador externo
+    
     props.onUpdateUser({
       name,
       about: description,
@@ -42,7 +41,16 @@ function EditProfilePopup(props) {
     <PopupWithForm title='Editar Perfil' isOpen = {props.isOpen} onClose = {props.onClose} name='edit' edit='Edit profile' onSubmit={handleSubmit}>
           <form className="modal__form" noValidate onSubmit={handleSubmit}>
             <div className="modal__input-separation">
-              <input type="text" id="name-input" className="modal__input modal__input_name" placeholder="Digite o nome do Usuário" required minLength="2" maxLength="40" onChange={handleChangeName} value={name}/>
+              <input 
+                type="text" 
+                id="name-input" 
+                className="modal__input modal__input_name" 
+                placeholder="Digite o nome do Usuário" 
+                required 
+                minLength="2" 
+                maxLength="40" 
+                onChange={handleChangeName} 
+                value={name}/>
               <span className="name-input-error modal__input-error"></span>
             </div>
             <div className="modal__input-separation">

@@ -6,6 +6,7 @@ import ImagePopup from './ImagePopup';
 import apiInstance from '../utils/api';
 import CurrentUSerContext from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -85,6 +86,17 @@ function App() {
         console.error("Erro ao atualizar o perfil do usuário:", error);
       });
   };
+
+  const handleUpdateAvatar = (userData) => {
+    apiInstance.setUserAvatar(userData)
+      .then(updateAvatar => {
+        setCurrentUser(updateAvatar)
+        closeAllPopups()
+      })
+      .catch(error => {
+        console.error("Erro ao atualiar a foto do avatar", error)
+      })
+  }
   
   return (
     <CurrentUSerContext.Provider value={{currentUser, initialCards}}>
@@ -97,6 +109,7 @@ function App() {
         />
 
         {/*<!--modal do adicionar card-->*/}
+
         <PopupWithForm name='modal-add' buttonclose='button-close' title='Novo Local' isOpen = {isAddPlacePopupOpen} onClose = {closeAllPopups}>
           <form className="modal__form modal__form_add" noValidate>
             <div className="modal__input-separation">
@@ -117,15 +130,11 @@ function App() {
         </PopupWithForm>
 
         {/*<!--modal de alterar foto do perfil-->*/}
-        <PopupWithForm name='modal_photo' buttonclose='button-close' buttonclassetwo='button-close-photo' title='Alterar a foto do perfil' isOpen={isEditAvatarPopupOpen} onClose = {closeAllPopups}>
-          <form className="modal__form modal__form_add modal__form_editPhoto" noValidate>
-            <div className="modal__input-separation">
-              <input type="url" id="photo-input" className="modal__input modal__input_link modal__input_save-photo" placeholder="URL da Imagem" required />
-              <span className="url-input-error modal__input-error"></span>
-            </div>
-            <button className="modal__button modal__button-create modal__button_save" type="submit">Salvar</button> 
-          </form>
-        </PopupWithForm>
+        <EditAvatarPopup 
+          isOpen={isEditAvatarPopupOpen}
+          onClose={closeAllPopups}
+          onUpdateAvatar={handleUpdateAvatar}
+        />
 
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
 

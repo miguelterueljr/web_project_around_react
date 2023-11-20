@@ -70,7 +70,7 @@ class Api {
   // Método para atualizar as informações do perfil do usuário
   setUserInfo(userData) {
     return fetch(`${this.baseUrl}/users/me`, {
-      method: 'PATCH', // Utilize o método PATCH para atualizar as informações existentes
+      method: 'PATCH', // método PATCH para atualizar as informações existentes
       headers: {
         'Content-Type': 'application/json',
         authorization: this.authorization,
@@ -83,6 +83,24 @@ class Api {
       .then(response => response.json())
       .catch(error => {
         console.error("Erro ao atualizar as informações do perfil:", error);
+        throw error;
+      });
+  }
+
+  setUserAvatar(userData) {
+    return fetch(`${this.baseUrl}/users/me/avatar`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: this.authorization,
+      },
+      body: JSON.stringify({
+        avatar: userData.avatar,
+      }),
+    })
+      .then(response => response.json())
+      .catch(error => {
+        console.error("Erro ao atualizar o avatar do usuário:", error);
         throw error;
       });
   }
