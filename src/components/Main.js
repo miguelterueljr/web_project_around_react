@@ -8,7 +8,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Card from './Card';
 import CurrentUSerContext from '../contexts/CurrentUserContext';
-import apiInstance from '../utils/api';
+
 
 function Main(props) {
   //acesso valor do contexto atraves do hook useContext
@@ -17,41 +17,9 @@ function Main(props) {
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
-    setCards(currentUser.initialCards);
-  }, [currentUser.initialCards]);
+    setCards(props.cards);
+  }, [props.cards]);
 
-  const handleCardClick = (cardData) => {
-    props.onCardClick(cardData);
-  };
-
-
-  //funcao like e dislike card
-  function handleCardLike(card) {
-    // Verifique mais uma vez se esse cartão já foi curtido
-    const isLiked = card.likes.some(i => i._id === currentUser.currentUser._id);
-    console.log(isLiked)
-    console.log('anterior',card) // estado inicial
-
-    // Envie uma solicitação para a API e obtenha os dados do cartão atualizados
-    apiInstance.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-      console.log('atualizado',newCard) //apos o curtir ou descurtir
-      // Atualize o estado local dos cards com os novos dados
-      setCards((state) =>
-        state.map((c) => (c._id === card._id ? newCard : c))
-      );
-    });
-  }
-
-  //deletar cartoes
-  function handleCardDelete(card) {
-    // Envie uma solicitação para a API para excluir o cartão
-    apiInstance.deleteCard(card._id)
-      .then(() => {
-        // Atualize o estado local dos cards excluindo o cartão deletado
-        setCards((state) => state.filter((c) => c._id !== card._id));
-      })
-    console.log('é pra ser deletado')
-  }
 
   return (
     <div>
@@ -79,16 +47,16 @@ function Main(props) {
         <section className="elements">
           {cards.map((cardData, index) => (
             <Card
-              key={index}
+              key={cardData._id}
               title={cardData.name}
               image={cardData.link}
               likes={cardData.likes}
-              id={cardData._id}
               owner={cardData.owner}
-              onCardClick={() => handleCardClick(cardData)}
-              onCardLike={() => handleCardLike(cardData)}
-              onCardDelete={() => handleCardDelete(cardData)}
-              isLiked={cardData.likes.some(i => i._id === currentUser.currentUser._id)}
+              id={cardData._id}
+              onCardClick={() => props.onCardClick(cardData)}
+              onCardLike={() => props.onCardLike(cardData)}
+              onCardDelete={() => props.onCardDelete(cardData)}
+              isLiked={cardData.likes.some(i => i._id === currentUser._id)}
             />
           ))}
         </section>

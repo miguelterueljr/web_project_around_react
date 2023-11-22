@@ -104,6 +104,26 @@ class Api {
         throw error;
       });
   }
+
+   // Método para adicionar um novo cartão
+   addCard(newCard) {
+    return fetch(`${this.baseUrl}/cards`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: this.authorization,
+      },
+      body: JSON.stringify({
+        name: newCard.title,
+        link: newCard.url,
+      }),
+    })
+      .then(response => response.json())
+      .catch(error => {
+        console.error("Erro ao adicionar um novo cartão:", error);
+        throw error;
+      });
+    }
 }
 
 const apiInstance = new Api();

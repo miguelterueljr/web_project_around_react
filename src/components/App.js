@@ -7,6 +7,7 @@ import apiInstance from '../utils/api';
 import CurrentUSerContext from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
+import AddPlacePopup from './AddPlacePopup';
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -15,6 +16,7 @@ function App() {
   const [selectedCard, setSelectedCard] = useState(null)
   const [currentUser, setCurrentUser] = useState(null);
   const [initialCards, setInitialCards] = useState([]);
+  const [cards, setCards] = useState([])
 
   //faço a chamada a minha classe api e atribuo seu valor a variavel currentUser
   useEffect(() => {
@@ -29,12 +31,44 @@ function App() {
     //aqui to puxando do arquivo api o fetchInitialCards  
     apiInstance.fetchInitialCards()
       .then(cardData => {
-        setInitialCards(cardData); // Atualize o estado com os cards iniciais
+        setCards(cardData);
       })
       .catch(error => {
         console.error("Erro ao buscar os cards iniciais:", error);
       });  
+
   }, []);
+
+  const handleCardLike = (card) => {
+    // Verifica se o card é undefined antes de acessar a propriedade likes
+    if (!card) {
+      console.error("Tentativa de curtir/descurtir um card undefined");
+      return;
+    }
+  
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+  
+    apiInstance.changeLikeCardStatus(card._id, !isLiked)
+      .then(newCard => {
+        setCards((state) =>
+          state.map((c) => (c._id === card._id ? newCard : c))
+        );
+      })
+      .catch(error => {
+        console.error("Erro ao curtir/descurtir o card:", error);
+      });
+  };
+
+  // Function to handle card delete
+  const handleCardDelete = (card) => {
+    apiInstance.deleteCard(card._id)
+      .then(() => {
+        setCards((state) => state.filter((c) => c._id !== card._id));
+      })
+      .catch(error => {
+        console.error("Erro ao deletar o card:", error);
+      });
+  };
 
   //funcao de adicionar ou remover opacidade
   const togglePageOpacity = () => {
@@ -97,6 +131,11 @@ function App() {
         console.error("Erro ao atualiar a foto do avatar", error)
       })
   }
+
+  //entender isso aqui melhor
+  function onAddPlaceSubmit(newCard) {
+    setCards([newCard, ...cards])
+  }
   
   return (
     <CurrentUSerContext.Provider value={{currentUser, initialCards}}>
@@ -109,20 +148,13 @@ function App() {
         />
 
         {/*<!--modal do adicionar card-->*/}
-
-        <PopupWithForm name='modal-add' buttonclose='button-close' title='Novo Local' isOpen = {isAddPlacePopupOpen} onClose = {closeAllPopups}>
-          <form className="modal__form modal__form_add" noValidate>
-            <div className="modal__input-separation">
-              <input type="text" id="title-input" className="modal__input modal__input_title" placeholder="Título" required minLength="2" maxLength="30" />
-              <span className="title-input-error modal__input-error"></span>
-            </div>
-            <div className="modal__input-separation">
-              <input type="url" id="url-input" className="modal__input modal__input_link" placeholder="URL da Imagem" required />
-              <span className="url-input-error modal__input-error"></span>
-            </div>
-            <button className="modal__button modal__button-create" type="submit">Criar</button> 
-          </form>
-        </PopupWithForm>
+        <AddPlacePopup
+          isOpen={isAddPlacePopupOpen}
+          onClose={closeAllPopups}
+          setCards={setCards}
+          onAddPlaceSubmit = {onAddPlaceSubmit}
+        />
+        
 
         {/*<!--modal de confirmação de delete card-->*/}
         <PopupWithForm name='modal-delete' buttonclose='button-close' buttonclassetwo='modal__button-close_close' title='Tem certeza ?'>
@@ -143,7 +175,9 @@ function App() {
           onAddPlaceClick={handleAddPlaceClick}
           onEditAvatarClick= {handleEditAvatarClick}
           onCardClick={handleCardClick}
-          initialCards={initialCards}
+          cards={cards}  // Pass cards as a prop
+          onCardLike={handleCardLike}  // Pass like handler as a prop
+          onCardDelete={handleCardDelete}  // Pass delete handler as a prop
         />
 
       </div>
